@@ -24,6 +24,9 @@ COPY server.js .
 
 EXPOSE 8080
 
-# No shell in this image, so this must be exec-form pointing directly at
-# the script — matches the same pattern as backend-service's ENTRYPOINT.
-ENTRYPOINT ["server.js"]
+# The distroless nodejs base image already sets ENTRYPOINT to its node
+# binary — we only need to supply the script as CMD (not override
+# ENTRYPOINT), so the final effective command becomes `node server.js`.
+# Setting ENTRYPOINT here instead would try to execute server.js directly
+# as a binary, which fails with "executable file not found in $PATH".
+CMD ["server.js"]
