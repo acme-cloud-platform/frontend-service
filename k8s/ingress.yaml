@@ -10,11 +10,12 @@ metadata:
     alb.ingress.kubernetes.io/healthcheck-path: /
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
     # IngressGroup: merges this Ingress with backend-service's Ingress into
-    # ONE shared ALB instead of provisioning a second, separate load
-    # balancer. Same group.name string on both resources is what triggers
-    # the merge — the controller reconciles all Ingresses in a group into
-    # a single ALB with combined routing rules.
-    alb.ingress.kubernetes.io/group.name: acme-cloud-poc
+    # ONE shared ALB per environment. INGRESS_GROUP_PLACEHOLDER is
+    # substituted by the workflow with acme-cloud-poc / acme-cloud-dev /
+    # acme-cloud-qa — MUST match backend-service's group.name for the same
+    # environment exactly, or frontend/backend end up in different groups
+    # and you'd get two ALBs per environment instead of one.
+    alb.ingress.kubernetes.io/group.name: INGRESS_GROUP_PLACEHOLDER
     # Frontend's "/" rule must evaluate AFTER backend's "/api" rule, or "/"
     # would greedily match everything including /api requests first.
     alb.ingress.kubernetes.io/group.order: "10"
